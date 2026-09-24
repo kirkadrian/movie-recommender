@@ -28,7 +28,7 @@ def show_poster_grid(titles):
         with cols[i % 5]:
             poster = get_poster_url(title)
             if poster:
-                st.image(poster, use_container_width=True)
+                st.image(poster, width='stretch')
             st.caption(title)
 
 st.markdown("""
