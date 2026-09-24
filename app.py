@@ -130,8 +130,16 @@ selected_movie = st.selectbox(
     on_change=clear_content_results,
 )
 
+content_num_recs = st.select_slider(
+    "Number of recommendations:",
+    options=[5, 10, 15],
+    value=5,
+    key="content_num_recs",
+    on_change=clear_content_results,
+)
+
 if st.button("Get Content Recommendations"):
-    st.session_state.content_results = content_recs.get(selected_movie, [])
+    st.session_state.content_results = content_recs.get(selected_movie, [])[:content_num_recs]
     st.session_state.content_movie = selected_movie
 
 if st.session_state.content_movie:
@@ -162,6 +170,14 @@ selected_user = st.selectbox(
     on_change=clear_collab_results,
 )
 
+collab_num_recs = st.select_slider(
+    "Number of recommendations:",
+    options=[5, 10, 15],
+    value=5,
+    key="collab_num_recs",
+    on_change=clear_collab_results,
+)
+
 col1, col2 = st.columns(2)
 
 with col1:
@@ -169,7 +185,7 @@ with col1:
         try:
             user_predictions = predictions_df.loc[selected_user].sort_values(ascending=False)
             seen_movies = user_history.get(selected_user, [])
-            st.session_state.collab_results = user_predictions.drop(seen_movies, errors='ignore').head(5).index.tolist()
+            st.session_state.collab_results = user_predictions.drop(seen_movies, errors='ignore').head(collab_num_recs).index.tolist()
             st.session_state.collab_user = selected_user
         except KeyError:
             st.error(f"No prediction data found for user {selected_user}.")
@@ -183,4 +199,4 @@ if st.session_state.collab_user:
         for title in st.session_state.collab_results:
             st.write(f"- {title}")
     else:
-        st.info(f"No new recommendations available for User **{st.session_state.collab_user}**")
+        st.info(f"No new recommendations available for User **{st.session_state.collab_user}**.")
