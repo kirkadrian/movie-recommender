@@ -1,6 +1,35 @@
 import streamlit as st
 import pickle
 import random
+import requests
+
+TMDB_API_KEY = st.secrets.get("TMDB_API_KEY", "")
+
+@st.cache_data
+def get_poster_url(title):
+    if not TMDB_API_KEY:
+        return None
+    try:
+        r = requests.get(
+            "https://api.themoviedb.org/3/search/movie",
+            params={"api_key": TMDB_API_KEY, "query": title},
+            timeout=5,
+        )
+        results = r.json().get("results", [])
+        if results and results[0].get("poster_path"):
+            return f"https://image.tmdb.org/t/p/w200{results[0]['poster_path']}"
+    except Exception:
+        pass
+    return None
+
+def show_poster_grid(titles):
+    cols = st.columns(5)
+    for i, title in enumerate(titles):
+        with cols[i % 5]:
+            poster = get_poster_url(title)
+            if poster:
+                st.image(poster, use_container_width=True)
+            st.caption(title)
 
 st.markdown("""
 <style>
@@ -22,12 +51,8 @@ st.markdown("""
     }
     
     .stButton>button:hover {
-    background-color: #E0E0E0 !important;
-    color: #000000 !important;
-    }
-
-    div[data-baseweb="slider"] div[role="slider"] {
-    transition: left 0.15s ease-out !important;
+        background-color: #000000 !important;
+        color: #FFFFFF !important;
     }
     
     .stSelectbox div[data-baseweb="select"] > div {
@@ -136,7 +161,7 @@ selected_movie = st.selectbox(
 
 content_num_recs = st.select_slider(
     "Number of recommendations:",
-    options=[5, 10],
+    options=[5, 10, 15],
     value=5,
     key="content_num_recs",
     on_change=clear_content_results,
@@ -149,8 +174,7 @@ if st.button("Get Content Recommendations"):
 if st.session_state.content_movie:
     if st.session_state.content_results:
         st.write(f"Because you liked **{st.session_state.content_movie}**, based on the model we recommend:")
-        for title in st.session_state.content_results:
-            st.write(f"- {title}")
+        show_poster_grid(st.session_state.content_results)
     else:
         st.info(f"No similar movies found for **{st.session_state.content_movie}**.")
 
@@ -182,7 +206,7 @@ collab_num_recs = st.select_slider(
     on_change=clear_collab_results,
 )
 
-col1, col2, col3 = st.columns([3, 1, 1])
+col1, col2 = st.columns(2)
 
 with col1:
     if st.button("Get Collaborative Recommendations"):
@@ -194,13 +218,12 @@ with col1:
         except KeyError:
             st.error(f"No prediction data found for user {selected_user}.")
 
-with col3:
+with col2:
     st.button("Random User", on_click=pick_random_user)
 
 if st.session_state.collab_user:
     if st.session_state.collab_results:
         st.write(f"Recommendations from User **{st.session_state.collab_user}**:")
-        for title in st.session_state.collab_results:
-            st.write(f"- {title}")
+        show_poster_grid(st.session_state.collab_results)
     else:
-        st.info(f"No new recommendations available for User **{st.session_state.collab_user}**.")
+        st.info(f"No new recommendations available for User **{st.session_state.collab_user}** (they may have seen everything predicted for them).")
