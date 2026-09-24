@@ -132,7 +132,7 @@ selected_movie = st.selectbox(
 
 content_num_recs = st.select_slider(
     "Number of recommendations:",
-    options=[5, 10, 15],
+    options=[5, 10],
     value=5,
     key="content_num_recs",
     on_change=clear_content_results,
