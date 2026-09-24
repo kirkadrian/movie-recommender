@@ -178,7 +178,7 @@ collab_num_recs = st.select_slider(
     on_change=clear_collab_results,
 )
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns([3, 1, 1])
 
 with col1:
     if st.button("Get Collaborative Recommendations"):
@@ -190,7 +190,7 @@ with col1:
         except KeyError:
             st.error(f"No prediction data found for user {selected_user}.")
 
-with col2:
+with col3:
     st.button("Random User", on_click=pick_random_user)
 
 if st.session_state.collab_user:
