@@ -172,7 +172,11 @@ content_num_recs = st.select_slider(
 )
 
 if st.button("Get Content Recommendations"):
-    st.session_state.content_results = content_recs.get(selected_movie, [])[:content_num_recs]
+    raw_recs = content_recs.get(selected_movie, [])
+    
+    clean_recs = [movie for movie in raw_recs if movie != selected_movie]
+    
+    st.session_state.content_results = clean_recs[:content_num_recs]
     st.session_state.content_movie = selected_movie
 
 if st.session_state.content_movie:
