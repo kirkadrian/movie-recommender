@@ -8,19 +8,19 @@ st.markdown("""
         background-color: #FFFFFF;
     }
     
-    h1, h2, h3, p, label, div, span, li {
+    html, body, [class*="css"], h1, h2, h3, h4, h5, h6, p, label, div, span, li {
         color: #000000 !important;
-        font-family: 'Courier New', Courier, monospace !important;
+        font-family: 'Tahoma', sans-serif !important;
     }
     
     .stButton>button {
         background-color: #FFFFFF !important;
         color: #000000 !important;
-        border: 2px solid #000000 !important;
-        border-radius: 0px !important;
-        font-weight: bold;
-        text-transform: uppercase;
+        border: 1px solid #000000 !important;
+        border-radius: 4px !important;
+        transition: all 0.2s ease-in-out;
     }
+    
     .stButton>button:hover {
         background-color: #000000 !important;
         color: #FFFFFF !important;
@@ -29,7 +29,11 @@ st.markdown("""
     div[data-baseweb="select"] > div {
         background-color: #FFFFFF !important;
         border: 1px solid #000000 !important;
-        border-radius: 0px !important;
+        color: #000000 !important;
+        border-radius: 4px !important;
+    }
+    
+    div[data-baseweb="select"] span {
         color: #000000 !important;
     }
     
@@ -37,12 +41,18 @@ st.markdown("""
         background-color: #FFFFFF !important;
         border: 1px solid #000000 !important;
     }
+    
     li[data-baseweb="menu-item"] {
         color: #000000 !important;
+        background-color: #FFFFFF !important;
+    }
+    
+    li[data-baseweb="menu-item"]:hover {
+        background-color: #E0E0E0 !important;
     }
     
     hr {
-        border-top: 1px dashed #000000 !important;
+        border-top: 1px solid #E0E0E0 !important;
         margin-top: 2rem;
         margin-bottom: 2rem;
     }
@@ -77,29 +87,25 @@ if 'collab_user' not in st.session_state:
 if 'user_dropdown' not in st.session_state:
     st.session_state.user_dropdown = valid_users[0]
 
-st.text("""
-===================================================                                          
-   R E C O M M E N D A T I O N   E N G I N E     
-===================================================
-""")
+st.title("Movie Recommendation Engine")
 
-st.header("> CONTENT BASED RECOMMENDATIONS")
+st.header("Content-Based Filtering")
 st.write("Find similar movies based on genre and metadata.")
 
 selected_movie = st.selectbox("Search for a movie you personally like:", movie_titles)
 
-if st.button("RUN CONTENT_SEARCH"):
+if st.button("Get Content Recommendations"):
     st.session_state.content_results = content_recs.get(selected_movie, [])
     st.session_state.content_movie = selected_movie
 
 if st.session_state.content_results:
     st.write(f"Because you liked **{st.session_state.content_movie}**, based on the model we recommend:")
     for title in st.session_state.content_results:
-        st.write(f"  [+] {title}")
+        st.write(f"- {title}")
 
 st.divider()
 
-st.header("> COLLABORATION BASED RECOMMENDATIONS")
+st.header("Collaborative Filtering")
 st.write("Discover different movies based on other user's favorite movies.")
 
 def pick_random_user():
@@ -110,16 +116,16 @@ selected_user = st.selectbox("Select a User ID:", valid_users, key="user_dropdow
 col1, col2 = st.columns(2)
 
 with col1:
-    if st.button("RUN COLLAB_SEARCH"):
+    if st.button("Get Collaborative Recommendations"):
         user_predictions = predictions_df.loc[selected_user].sort_values(ascending=False)
         seen_movies = user_history.get(selected_user, [])
         st.session_state.collab_results = user_predictions.drop(seen_movies, errors='ignore').head(5).index.tolist()
         st.session_state.collab_user = selected_user
 
 with col2:
-    st.button("RANDOM USER ID", on_click=pick_random_user)
+    st.button("Random User", on_click=pick_random_user)
 
 if st.session_state.collab_results:
     st.write(f"Recommendations from User **{st.session_state.collab_user}**:")
     for title in st.session_state.collab_results:
-        st.write(f"  [+] {title}")
+        st.write(f"- {title}")
