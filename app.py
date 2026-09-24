@@ -22,8 +22,12 @@ st.markdown("""
     }
     
     .stButton>button:hover {
-        background-color: #000000 !important;
-        color: #FFFFFF !important;
+    background-color: #E0E0E0 !important;
+    color: #000000 !important;
+    }
+
+    div[data-baseweb="slider"] div[role="slider"] {
+    transition: left 0.15s ease-out !important;
     }
     
     .stSelectbox div[data-baseweb="select"] > div {
