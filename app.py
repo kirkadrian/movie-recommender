@@ -1,24 +1,25 @@
 import streamlit as st
 import pickle
 
-with open('movies_list.pkl', 'rb') as f:
-    movies_df = pickle.load(f)
+@st.cache_data
+def load_data():
+    with open('movies_list.pkl', 'rb') as f:
+        movies = pickle.load(f)
+    with open('content_recommendations.pkl', 'rb') as f:
+        content = pickle.load(f)
+    with open('collaborative_predictions.pkl', 'rb') as f:
+        collab = pickle.load(f)
+    with open('user_history.pkl', 'rb') as f:
+        history = pickle.load(f)
+    return movies, content, collab, history
 
-with open('content_recommendations.pkl', 'rb') as f:
-    content_recs = pickle.load(f)
-
-with open('collaborative_predictions.pkl', 'rb') as f:
-    predictions_df = pickle.load(f)
-
-with open('user_history.pkl', 'rb') as f:
-    user_history = pickle.load(f)
+movies_df, content_recs, predictions_df, user_history = load_data()
 
 movie_titles = movies_df['title'].tolist()
 valid_users = predictions_df.index.tolist()
 
 st.title("Movie Recommendation Engine")
 
-# --- Content-Based Filtering Section ---
 st.header("Content-Based Filtering")
 st.write("Find similar movies based on genre and metadata.")
 
@@ -32,7 +33,6 @@ if st.button("Get Content Recommendations"):
 
 st.divider()
 
-# --- Collaborative Filtering Section ---
 st.header("Collaborative Filtering")
 st.write("Discover movies based on hidden taste patterns from users like you.")
 
