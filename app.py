@@ -4,57 +4,50 @@ import random
 
 st.markdown("""
 <style>
-    /* Main app background */
     .stApp {
-        background-color: #000000;
+        background-color: #FFFFFF;
     }
     
-    /* Force all text to be neon green and monospace */
     h1, h2, h3, p, label, div, span, li {
-        color: #00FF00 !important;
+        color: #000000 !important;
         font-family: 'Courier New', Courier, monospace !important;
     }
     
-    /* Style buttons like terminal commands */
     .stButton>button {
-        background-color: #000000 !important;
-        color: #00FF00 !important;
-        border: 2px solid #00FF00 !important;
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+        border: 2px solid #000000 !important;
         border-radius: 0px !important;
         font-weight: bold;
         text-transform: uppercase;
     }
     .stButton>button:hover {
-        background-color: #00FF00 !important;
+        background-color: #000000 !important;
+        color: #FFFFFF !important;
+    }
+    
+    div[data-baseweb="select"] > div {
+        background-color: #FFFFFF !important;
+        border: 1px solid #000000 !important;
+        border-radius: 0px !important;
         color: #000000 !important;
     }
     
-    /* Style the dropdown boxes */
-    div[data-baseweb="select"] > div {
-        background-color: #000000 !important;
-        border: 1px solid #00FF00 !important;
-        border-radius: 0px !important;
-        color: #00FF00 !important;
-    }
-    
-    /* Style the dropdown list items */
     ul[data-baseweb="menu"] {
-        background-color: #000000 !important;
-        border: 1px solid #00FF00 !important;
+        background-color: #FFFFFF !important;
+        border: 1px solid #000000 !important;
     }
     li[data-baseweb="menu-item"] {
-        color: #00FF00 !important;
+        color: #000000 !important;
     }
     
-    /* Make dividers look like dashed terminal lines */
     hr {
-        border-top: 1px dashed #00FF00 !important;
+        border-top: 1px dashed #000000 !important;
         margin-top: 2rem;
         margin-bottom: 2rem;
     }
 </style>
 """, unsafe_allow_html=True)
-
 
 @st.cache_data
 def load_data():
@@ -85,18 +78,12 @@ if 'user_dropdown' not in st.session_state:
     st.session_state.user_dropdown = valid_users[0]
 
 st.text("""
-===================================================
-  __  __            _        ____                
- |  \/  | _____   _(_) ___  |  _ \ ___  ___ ___  
- | |\/| |/ _ \ \ / / |/ _ \ | |_) / _ \/ __/ __| 
- | |  | | (_) \ V /| |  __/ |  _ <  __/ (__\__ \ 
- |_|  |_|\___/ \_/ |_|\___| |_| \_\___|\___|___/ 
-                                                 
+===================================================                                          
    R E C O M M E N D A T I O N   E N G I N E     
 ===================================================
 """)
 
-st.header("> CONTENT_BASED.EXE")
+st.header("> CONTENT BASED RECOMMENDATIONS")
 st.write("Find similar movies based on genre and metadata.")
 
 selected_movie = st.selectbox("Search for a movie you personally like:", movie_titles)
@@ -112,7 +99,7 @@ if st.session_state.content_results:
 
 st.divider()
 
-st.header("> COLLAB_FILTER.EXE")
+st.header("> COLLABORATION BASED RECOMMENDATIONS")
 st.write("Discover different movies based on other user's favorite movies.")
 
 def pick_random_user():
