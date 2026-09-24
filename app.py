@@ -54,23 +54,19 @@ st.write("Discover different movies based on other user's favorite movies.")
 def pick_random_user():
     st.session_state.user_dropdown = random.choice(valid_users)
 
-col1, col2 = st.columns([3, 1])
+selected_user = st.selectbox("Select a User ID:", valid_users, key="user_dropdown")
+
+col1, col2 = st.columns(2)
 
 with col1:
-    selected_user = st.selectbox("Select a User ID:", valid_users, key="user_dropdown")
+    if st.button("Get Collaborative Recommendations"):
+        user_predictions = predictions_df.loc[selected_user].sort_values(ascending=False)
+        seen_movies = user_history.get(selected_user, [])
+        st.session_state.collab_results = user_predictions.drop(seen_movies, errors='ignore').head(5).index.tolist()
+        st.session_state.collab_user = selected_user
 
 with col2:
-
-    st.write("")
-    st.write("")
     st.button("Random User", on_click=pick_random_user)
-
-if st.button("Get Collaborative Recommendations"):
-    user_predictions = predictions_df.loc[selected_user].sort_values(ascending=False)
-    seen_movies = user_history.get(selected_user, [])
-    st.session_state.collab_results = user_predictions.drop(seen_movies, errors='ignore').head(5).index.tolist()
-    st.session_state.collab_user = selected_user
-
 
 if st.session_state.collab_results:
     st.write(f"Recommendations from User **{st.session_state.collab_user}**:")
