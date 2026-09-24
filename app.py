@@ -235,3 +235,13 @@ if st.session_state.collab_user:
         show_poster_grid(st.session_state.collab_results)
     else:
         st.info(f"No new recommendations available for User **{st.session_state.collab_user}** (they may have seen everything predicted for them).")
+
+st.markdown("""
+<br><br>
+<div style="text-align: center;">
+    <p style="font-size: 14px;">
+        <b>Data Source:</b> <a href="https://grouplens.org/datasets/movielens/" target="_blank" style="color: #000000; text-decoration: underline;">MovieLens Dataset</a><br>
+        <i>Built as a hybrid recommendation engine portfolio project.</i>
+    </p>
+</div>
+""", unsafe_allow_html=True)
