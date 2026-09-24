@@ -26,29 +26,45 @@ st.markdown("""
         color: #FFFFFF !important;
     }
     
-    div[data-baseweb="select"] > div {
+    .stSelectbox div[data-baseweb="select"] > div {
         background-color: #FFFFFF !important;
-        border: 1px solid #000000 !important;
         color: #000000 !important;
+        border: 1px solid #000000 !important;
         border-radius: 4px !important;
     }
     
-    div[data-baseweb="select"] span {
-        color: #000000 !important;
+    .stSelectbox div[data-baseweb="select"] > div:focus-within {
+        border-color: #000000 !important;
+        box-shadow: none !important;
     }
     
-    ul[data-baseweb="menu"] {
+    .stSelectbox div[data-baseweb="select"] span, 
+    .stSelectbox div[data-baseweb="select"] input {
+        color: #000000 !important;
+        background-color: transparent !important;
+    }
+    
+    .stSelectbox svg {
+        fill: #000000 !important;
+    }
+    
+    div[data-baseweb="popover"] > div {
         background-color: #FFFFFF !important;
         border: 1px solid #000000 !important;
     }
     
-    li[data-baseweb="menu-item"] {
-        color: #000000 !important;
+    div[data-baseweb="popover"] ul {
         background-color: #FFFFFF !important;
     }
     
-    li[data-baseweb="menu-item"]:hover {
+    div[data-baseweb="popover"] li {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+    }
+    
+    div[data-baseweb="popover"] li:hover {
         background-color: #E0E0E0 !important;
+        color: #000000 !important;
     }
     
     hr {
