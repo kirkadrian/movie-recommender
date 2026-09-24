@@ -2,17 +2,21 @@ import streamlit as st
 import pickle
 import random
 import requests
+import re 
 
 TMDB_API_KEY = st.secrets.get("TMDB_API_KEY", "")
+
 
 @st.cache_data
 def get_poster_url(title):
     if not TMDB_API_KEY:
         return None
     try:
+        clean_title = re.sub(r'\s*\(\d{4}\)', '', title).strip()
+        
         r = requests.get(
             "https://api.themoviedb.org/3/search/movie",
-            params={"api_key": TMDB_API_KEY, "query": title},
+            params={"api_key": TMDB_API_KEY, "query": clean_title},
             timeout=5,
         )
         results = r.json().get("results", [])
