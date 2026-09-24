@@ -87,7 +87,18 @@ def load_data():
         history = pickle.load(f)
     return movies, content, collab, history
 
-movies_df, content_recs, predictions_df, user_history = load_data()
+try:
+    with st.spinner("Loading recommendation data..."):
+        movies_df, content_recs, predictions_df, user_history = load_data()
+except FileNotFoundError as e:
+    st.error(
+        f"Couldn't find a required data file ({e.filename}). "
+        "Make sure all four .pkl files are present in the app directory."
+    )
+    st.stop()
+except Exception as e:
+    st.error(f"Something went wrong while loading data: {e}")
+    st.stop()
 
 movie_titles = movies_df['title'].tolist()
 valid_users = predictions_df.index.tolist()
@@ -108,40 +119,68 @@ st.title("Movie Recommendation Engine")
 st.header("Content-Based Filtering")
 st.write("Find similar movies based on genre and metadata.")
 
-selected_movie = st.selectbox("Search for a movie you personally like:", movie_titles)
+def clear_content_results():
+    st.session_state.content_results = []
+    st.session_state.content_movie = ""
+
+selected_movie = st.selectbox(
+    "Search for a movie you personally like:",
+    movie_titles,
+    key="content_movie_dropdown",
+    on_change=clear_content_results,
+)
 
 if st.button("Get Content Recommendations"):
     st.session_state.content_results = content_recs.get(selected_movie, [])
     st.session_state.content_movie = selected_movie
 
-if st.session_state.content_results:
-    st.write(f"Because you liked **{st.session_state.content_movie}**, based on the model we recommend:")
-    for title in st.session_state.content_results:
-        st.write(f"- {title}")
+if st.session_state.content_movie:
+    if st.session_state.content_results:
+        st.write(f"Because you liked **{st.session_state.content_movie}**, based on the model we recommend:")
+        for title in st.session_state.content_results:
+            st.write(f"- {title}")
+    else:
+        st.info(f"No similar movies found for **{st.session_state.content_movie}**.")
 
 st.divider()
 
 st.header("Collaborative Filtering")
 st.write("Discover different movies based on other user's favorite movies.")
 
+def clear_collab_results():
+    st.session_state.collab_results = []
+    st.session_state.collab_user = ""
+
 def pick_random_user():
     st.session_state.user_dropdown = random.choice(valid_users)
+    clear_collab_results()
 
-selected_user = st.selectbox("Select a User ID:", valid_users, key="user_dropdown")
+selected_user = st.selectbox(
+    "Select a User ID:",
+    valid_users,
+    key="user_dropdown",
+    on_change=clear_collab_results,
+)
 
 col1, col2 = st.columns(2)
 
 with col1:
     if st.button("Get Collaborative Recommendations"):
-        user_predictions = predictions_df.loc[selected_user].sort_values(ascending=False)
-        seen_movies = user_history.get(selected_user, [])
-        st.session_state.collab_results = user_predictions.drop(seen_movies, errors='ignore').head(5).index.tolist()
-        st.session_state.collab_user = selected_user
+        try:
+            user_predictions = predictions_df.loc[selected_user].sort_values(ascending=False)
+            seen_movies = user_history.get(selected_user, [])
+            st.session_state.collab_results = user_predictions.drop(seen_movies, errors='ignore').head(5).index.tolist()
+            st.session_state.collab_user = selected_user
+        except KeyError:
+            st.error(f"No prediction data found for user {selected_user}.")
 
 with col2:
     st.button("Random User", on_click=pick_random_user)
 
-if st.session_state.collab_results:
-    st.write(f"Recommendations from User **{st.session_state.collab_user}**:")
-    for title in st.session_state.collab_results:
-        st.write(f"- {title}")
+if st.session_state.collab_user:
+    if st.session_state.collab_results:
+        st.write(f"Recommendations from User **{st.session_state.collab_user}**:")
+        for title in st.session_state.collab_results:
+            st.write(f"- {title}")
+    else:
+        st.info(f"No new recommendations available for User **{st.session_state.collab_user}**")
