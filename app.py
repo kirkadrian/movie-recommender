@@ -241,7 +241,6 @@ st.markdown("""
 <div style="text-align: center;">
     <p style="font-size: 14px;">
         <b>Data Source:</b> <a href="https://grouplens.org/datasets/movielens/" target="_blank" style="color: #000000; text-decoration: underline;">MovieLens Dataset</a><br>
-        <i>Built as a hybrid recommendation engine portfolio project.</i>
     </p>
 </div>
 """, unsafe_allow_html=True)
